@@ -1,0 +1,22 @@
+finlytics_flask/
+│
+├── app.py                     # Flask entry point
+├── requirements.txt
+├── .env                       # For GOOGLE_API_KEY, SECRET_KEY, etc.
+│
+├── instance/
+│   └── users.db               # SQLite DB (auto created)
+│
+├── models/
+│   └── user_model.py          # SQLAlchemy User model
+│
+├── routes/
+│   ├── auth_routes.py         # Login/Signup endpoints
+│   └── analysis_routes.py     # File upload & AI processing endpoints
+│
+├── services/
+│   ├── ai_service.py          # Handles Gemini, embeddings, and PDF analysis
+│   └── utils.py               # Helper functions
+│
+└── uploads/
+    └── statements/            # Saved PDFs
