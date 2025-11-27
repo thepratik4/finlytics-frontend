@@ -1,0 +1,10 @@
+
+/* Using Tailwind Play CDN loaded in index.html for utility classes.
+	This file provides small fallbacks and base styles. */
+
+html, body, #root { height: 100%; }
+body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background-color: #f8fafc; }
+
+.hidden-scrollbar::-webkit-scrollbar { display: none; }
+.hidden-scrollbar { -ms-overflow-style: none; }
+

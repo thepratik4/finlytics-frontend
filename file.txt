@@ -1,3 +1,4 @@
+The one provided by Ajit
 finlytics_flask/
 │
 ├── app.py                     # Flask entry point
@@ -20,3 +21,84 @@ finlytics_flask/
 │
 └── uploads/
     └── statements/            # Saved PDFs
+
+
+A — Final backend-only project structure(Yuvraj)
+
+finlytics_flask/
+├── app.py
+├── config.py
+├── .env
+├── all_requirements.txt
+├── Dockerfile
+├── extensions.py
+├── file.txt
+├── instance/
+│   ├── user.db
+│   └── users.db
+├── models/
+│   └── user_model.py
+├── mongo_models/
+│   ├── user.py
+│   ├── session.py
+│   ├── message.py
+│   └── pdf.py
+├── routes/
+│   ├── auth_routes.py
+│   ├── analysis_routes.py
+│   ├── session_routes.py
+│   ├── message_routes.py
+│   └── pdf_routes.py
+├── services/
+│   ├── ai_service.py
+│   └── utils.py
+├── storage/
+│   └── gridfs_helper.py
+├── scripts/
+│   ├── migrate_uploads_to_gridfs.py
+│   └── migrate_users_sqlite_to_mongo.py
+└── uploads/
+    └── statements/
+        ├── file1.pdf
+        └── file2.pdf
+
+B — Final full project structure (backend + frontend)
+
+finlytics_flask/
+├── app.py
+├── config.py
+├── .env
+├── all_requirements.txt
+├── Dockerfile
+├── extensions.py
+├── instance/
+├── models/
+├── mongo_models/
+├── routes/
+├── services/
+├── storage/
+├── scripts/
+├── uploads/
+└── finlytics-frontend/        <-- NEW frontend folder (Vite + React)
+    ├── package.json
+    ├── vite.config.js
+    ├── index.html
+    ├── postcss.config.cjs
+    ├── tailwind.config.cjs
+    ├── public/
+    └── src/
+        ├── main.jsx
+        ├── App.jsx
+        ├── api.js
+        ├── pages/
+        │   ├── Login.jsx
+        │   ├── Register.jsx
+        │   ├── Dashboard.jsx
+        │   └── Session.jsx
+        ├── components/
+        │   ├── Navbar.jsx
+        │   └── PrivateRoute.jsx
+        ├── styles/
+        │   └── index.css
+        └── utils/
+            └── auth.js
