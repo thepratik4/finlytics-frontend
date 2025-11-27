@@ -12,7 +12,8 @@ import {
   Bot,
   User,
   Loader2,
-  FileUp
+  FileUp,
+  Sparkles
 } from 'lucide-react'
 
 export default function Session() {
@@ -48,23 +49,31 @@ export default function Session() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
-  const send = async (e) => {
-    e.preventDefault()
-    if (!text.trim()) return
+  const sendMessage = async (messageText) => {
+    if (!messageText.trim()) return
 
-    const tempMsg = { _id: Date.now(), role: 'user', text: text }
+    const tempMsg = { _id: Date.now(), role: 'user', text: messageText }
     setMessages(prev => [...prev, tempMsg])
-    setText('')
     setLoading(true)
 
     try {
-      await api.post(`/messages/${id}`, { text, role: 'user' })
+      await api.post(`/messages/${id}`, { text: messageText, role: 'user' })
       await load()
     } catch (e) {
       console.error("Error sending message:", e)
     } finally {
       setLoading(false)
     }
+  }
+
+  const send = async (e) => {
+    e.preventDefault()
+    await sendMessage(text)
+    setText('')
+  }
+
+  const summarize = () => {
+    sendMessage("Please provide a detailed financial summary of the uploaded documents, including key financial data and insights.")
   }
 
   const upload = async (e) => {
@@ -108,6 +117,15 @@ export default function Session() {
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {/* Summarize Button */}
+          <button
+            onClick={summarize}
+            disabled={loading || pdfs.length === 0}
+            className="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-medium py-2.5 px-4 rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed mb-4"
+          >
+            <Sparkles className="w-4 h-4" /> Generate Summary
+          </button>
+
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">Documents</h2>
             <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">{pdfs.length}</span>
