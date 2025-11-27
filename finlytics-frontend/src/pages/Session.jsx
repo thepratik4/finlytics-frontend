@@ -193,15 +193,85 @@ export default function Session() {
               <div
                 className={`max-w-3xl rounded-2xl px-6 py-4 shadow-sm ${m.role === 'user'
                     ? 'bg-indigo-600 text-white rounded-br-none'
-                    : 'bg-white text-slate-800 border border-slate-100 rounded-bl-none'
+                    : 'bg-white text-slate-800 border border-slate-100 rounded-bl-none w-full'
                   }`}
               >
                 {m.role === 'ai' ? (
-                  <div className="prose prose-sm max-w-none prose-indigo prose-p:leading-relaxed prose-headings:font-semibold prose-a:text-indigo-600">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {m.text || ''}
-                    </ReactMarkdown>
-                  </div>
+                  (() => {
+                    try {
+                      // Try to parse JSON if it's a string
+                      const data = typeof m.text === 'string' ? JSON.parse(m.text) : m.text;
+
+                      // Check if it has the expected structure
+                      if (data && data.summary && data.financial_data) {
+                        return (
+                          <div className="space-y-6">
+                            {/* Executive Summary */}
+                            <div className="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+                              <h3 className="text-sm font-semibold text-indigo-900 uppercase tracking-wide mb-2 flex items-center gap-2">
+                                <Bot className="w-4 h-4" /> Executive Summary
+                              </h3>
+                              <p className="text-slate-700 leading-relaxed text-sm">{data.summary}</p>
+                            </div>
+
+                            {/* Financial Data Grid */}
+                            <div className="grid grid-cols-2 gap-3">
+                              {Object.entries(data.financial_data).map(([key, value]) => (
+                                <div key={key} className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                                  <div className="text-xs text-slate-500 uppercase tracking-wider mb-1">{key.replace(/_/g, ' ')}</div>
+                                  <div className="font-semibold text-slate-900">{value}</div>
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Key Insights */}
+                            {data.key_insights && data.key_insights.length > 0 && (
+                              <div>
+                                <h4 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+                                  <FileText className="w-4 h-4 text-indigo-500" /> Key Insights
+                                </h4>
+                                <ul className="space-y-2">
+                                  {data.key_insights.map((insight, i) => (
+                                    <li key={i} className="flex gap-3 text-sm text-slate-700 bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
+                                      <span className="text-indigo-500 font-bold">•</span>
+                                      {insight}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {/* Detailed Sections */}
+                            {data.sections && data.sections.map((section, i) => (
+                              <div key={i} className="border-t border-slate-100 pt-4">
+                                <h4 className="font-semibold text-slate-800 mb-2">{section.title}</h4>
+                                <div className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
+                                  {section.content}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      }
+                      // Fallback to markdown if not structured
+                      return (
+                        <div className="prose prose-sm max-w-none prose-indigo prose-p:leading-relaxed prose-headings:font-semibold prose-a:text-indigo-600">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {m.text || ''}
+                          </ReactMarkdown>
+                        </div>
+                      );
+                    } catch (e) {
+                      // Fallback on parse error
+                      return (
+                        <div className="prose prose-sm max-w-none prose-indigo prose-p:leading-relaxed prose-headings:font-semibold prose-a:text-indigo-600">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {m.text || ''}
+                          </ReactMarkdown>
+                        </div>
+                      );
+                    }
+                  })()
                 ) : (
                   <div className="whitespace-pre-wrap leading-relaxed">{m.text}</div>
                 )}
