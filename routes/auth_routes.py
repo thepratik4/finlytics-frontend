@@ -85,30 +85,44 @@ auth_bp = Blueprint("auth_bp", __name__, url_prefix='/api/auth')
 @auth_bp.route("/signup", methods=["POST"])
 def signup():
     data = request.get_json() or {}
+    print(f"DEBUG: Signup attempt for {data.get('email')}")
     email = data.get("email")
     password = data.get("password")
     name = data.get("name") or ""
     if not email or not password: return jsonify({"error": "Email and password required"}), 400
     try:
         user_id = user_model.create_user(name, email, password)
+        print(f"DEBUG: User created {user_id}")
         access_token = create_access_token(identity=str(user_id))
         return jsonify({"message":"User created", "user": {"id": user_id, "email": email, "name": name}, "token": access_token}), 201
     except ValueError as e:
+        print(f"DEBUG: Signup error: {e}")
         return jsonify({"error": str(e)}), 400
     except Exception as e:
+        print(f"DEBUG: Signup exception: {e}")
         return jsonify({"error":"Server error"}), 500
 
 @auth_bp.route("/login", methods=["POST"])
 def login():
     data = request.get_json() or {}
+    print(f"DEBUG: Login attempt for {data.get('email')}")
     email = data.get("email")
     password = data.get("password")
     if not email or not password: return jsonify({"error":"Email and password required"}), 400
     user = user_model.find_by_email(email)
     if not user:
+        print("DEBUG: User not found")
         return jsonify({"error":"Invalid credentials"}), 401
     import bcrypt
-    if not bcrypt.checkpw(password.encode('utf8'), user['password_hash']):
+    print(f"DEBUG: User found, checking password. Hash type: {type(user['password_hash'])}")
+    try:
+        if not bcrypt.checkpw(password.encode('utf8'), user['password_hash']):
+            print("DEBUG: Password check failed")
+            return jsonify({"error":"Invalid credentials"}), 401
+    except Exception as e:
+        print(f"DEBUG: Password check error: {e}")
         return jsonify({"error":"Invalid credentials"}), 401
+        
+    print("DEBUG: Login successful")
     access_token = create_access_token(identity=str(user['_id']))
     return jsonify({"message":"Login successful","token":access_token,"user":{"id":str(user['_id']),"email":user['email']}}), 200
