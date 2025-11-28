@@ -7,7 +7,7 @@ finlytics_flask/
 │
 ├── instance/
 │   └── users.db               # SQLite DB (auto created)
-│
+│d
 ├── models/
 │   └── user_model.py          # SQLAlchemy User model
 │
